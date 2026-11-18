@@ -21,20 +21,13 @@ public final class VoidWorldBoundary {
                 || isInside(chunkX, chunkZ + 1)
                 || isInside(chunkX, chunkZ - 1);
     }
-    public static boolean isInsideNorth(int chunkX, int chunkZ) {
-        return isInside(chunkX, chunkZ - 1);
-    }
-
-    public static boolean isInsideSouth(int chunkX, int chunkZ) {
-        return isInside(chunkX, chunkZ + 1);
-    }
-
-    public static boolean isInsideEast(int chunkX, int chunkZ) {
-        return isInside(chunkX + 1, chunkZ);
-    }
-
-    public static boolean isInsideWest(int chunkX, int chunkZ) {
-        return isInside(chunkX - 1, chunkZ);
+    public static boolean isDiagonalInside(
+            int chunkX,
+            int chunkZ,
+            int offsetX,
+            int offsetZ
+    ) {
+        return isInside(chunkX + offsetX, chunkZ + offsetZ);
     }
 
 }

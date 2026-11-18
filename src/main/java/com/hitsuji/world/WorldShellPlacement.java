@@ -32,6 +32,7 @@ public final class WorldShellPlacement {
         placeInternal(level, template, targetMin, rotation, false);
     }
 
+
     private static void placeInternal(
             WorldGenLevel level,
             StructureTemplate template,
@@ -39,9 +40,17 @@ public final class WorldShellPlacement {
             Rotation rotation,
             boolean ignoreAir
     ) {
+        // Correct the base orientation of our structure templates.
+        Rotation actualRotation = switch (rotation) {
+            case NONE -> Rotation.CLOCKWISE_180;
+            case CLOCKWISE_90 -> Rotation.COUNTERCLOCKWISE_90;
+            case CLOCKWISE_180 -> Rotation.NONE;
+            case COUNTERCLOCKWISE_90 -> Rotation.CLOCKWISE_90;
+        };
+
         StructurePlaceSettings settings =
                 new StructurePlaceSettings()
-                        .setRotation(rotation)
+                        .setRotation(actualRotation)
                         .setMirror(Mirror.NONE)
                         .setRotationPivot(BlockPos.ZERO)
                         .setIgnoreEntities(true);
@@ -53,7 +62,7 @@ public final class WorldShellPlacement {
         BlockPos origin = template.getZeroPositionWithTransform(
                 targetMin,
                 Mirror.NONE,
-                rotation
+                actualRotation
         );
 
         template.placeInWorld(
@@ -64,43 +73,5 @@ public final class WorldShellPlacement {
                 level.getRandom(),
                 2
         );
-    }
-    public static void placeCorner(
-            WorldGenLevel level,
-            boolean diagonalInside,
-            StructureTemplate inner,
-            StructureTemplate outer,
-            int innerSize,
-            int outerSize,
-            int anchorX,
-            int anchorZ,
-            boolean westSide,
-            boolean northSide,
-            int y,
-            Rotation rotation,
-            boolean replaceAir
-    ) {
-        StructureTemplate selected =
-                diagonalInside ? inner : outer;
-
-        int size = diagonalInside ? innerSize : outerSize;
-
-        int x = westSide ? anchorX - size : anchorX + 1;
-        int z = northSide ? anchorZ - size : anchorZ + 1;
-        if (replaceAir && diagonalInside) {
-            WorldShellPlacement.placeReplacing(
-                    level,
-                    selected,
-                    new BlockPos(x, y, z),
-                    rotation
-            );
-        } else {
-            WorldShellPlacement.place(
-                    level,
-                    selected,
-                    new BlockPos(x, y, z),
-                    rotation
-            );
-        }
     }
 }

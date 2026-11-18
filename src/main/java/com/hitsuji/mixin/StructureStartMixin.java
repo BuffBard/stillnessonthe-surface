@@ -30,8 +30,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
                 ChunkPos chunkPos,
                 CallbackInfo ci
         ){
-            int chunkX = chunkPos.getRegionX();
-            int chunkZ = chunkPos.getRegionZ();
+            int chunkX = chunkPos.x();
+            int chunkZ = chunkPos.z();
 
             if (!VoidWorldBoundary.isInside(chunkX, chunkZ)) {
                 ci.cancel();

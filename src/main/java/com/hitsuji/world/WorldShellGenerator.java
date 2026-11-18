@@ -81,6 +81,7 @@ public final class WorldShellGenerator {
                     Rotation.COUNTERCLOCKWISE_90
             );
         }
+
         else if (north) {
             placeEdge(level, t, minX, minZ, Rotation.NONE);
         } else if (east) {
@@ -91,7 +92,7 @@ public final class WorldShellGenerator {
             placeEdge(level, t, minX, minZ,
                     Rotation.COUNTERCLOCKWISE_90);
         }
-    }
+        }
 
 
     private static void placeEdge(
@@ -176,6 +177,48 @@ public final class WorldShellGenerator {
                 capstone,
                 new BlockPos(minX, capstoneY, minZ),
                 rotation
+        );
+    }
+    private static void placeOuterCorner(
+            WorldGenLevel level,
+            WorldShellTemplates t,
+            int minX,
+            int minZ,
+            Rotation rotation
+    ) {
+        int bottomY = level.getMinY();
+        int seaLevel = level.getSeaLevel();
+
+        int segmentHeight = t.wallOuterCorner.getSize().getY();
+
+        if (segmentHeight <= 0) {
+            System.err.println("[WorldShell] Invalid outer corner height!");
+            return;
+        }
+
+        int capstoneY = bottomY;
+
+        while (capstoneY <= seaLevel) {
+            WorldShellPlacement.place(
+                    level,
+                    t.wallOuterCorner,
+                    new BlockPos(minX, capstoneY, minZ),
+                    rotation
+            );
+
+            capstoneY += segmentHeight;
+        }
+
+        WorldShellPlacement.place(
+                level,
+                t.capstoneOuterCorner,
+                new BlockPos(minX, capstoneY, minZ),
+                rotation
+        );
+
+        System.out.println(
+                "[WorldShell] Generated OUTER corner at "
+                        + minX + ", " + minZ
         );
     }
 }

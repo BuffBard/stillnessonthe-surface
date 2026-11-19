@@ -16,18 +16,19 @@ public final class VoidWorldBoundary {
         if (isInside(chunkX, chunkZ)) {
             return false;
         }
-        return isInside(chunkX + 1, chunkZ)
+
+        // Cardinal neighbors
+        if (isInside(chunkX + 1, chunkZ)
                 || isInside(chunkX - 1, chunkZ)
                 || isInside(chunkX, chunkZ + 1)
-                || isInside(chunkX, chunkZ - 1);
-    }
-    public static boolean isDiagonalInside(
-            int chunkX,
-            int chunkZ,
-            int offsetX,
-            int offsetZ
-    ) {
-        return isInside(chunkX + offsetX, chunkZ + offsetZ);
-    }
+                || isInside(chunkX, chunkZ - 1)) {
+            return true;
+        }
 
+        // Diagonal neighbors
+        return isInside(chunkX + 1, chunkZ + 1)
+                || isInside(chunkX + 1, chunkZ - 1)
+                || isInside(chunkX - 1, chunkZ + 1)
+                || isInside(chunkX - 1, chunkZ - 1);
+    }
 }

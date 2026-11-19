@@ -20,25 +20,14 @@ public final class WorldShellPlacement {
             BlockPos targetMin,
             Rotation rotation
     ) {
-        placeInternal(level, template, targetMin, rotation, true);
+        placeInternal(level, template, targetMin, rotation);
     }
-
-    public static void placeReplacing(
-            WorldGenLevel level,
-            StructureTemplate template,
-            BlockPos targetMin,
-            Rotation rotation
-    ) {
-        placeInternal(level, template, targetMin, rotation, false);
-    }
-
 
     private static void placeInternal(
             WorldGenLevel level,
             StructureTemplate template,
             BlockPos targetMin,
-            Rotation rotation,
-            boolean ignoreAir
+            Rotation rotation
     ) {
         // Correct the base orientation of our structure templates.
         Rotation actualRotation = switch (rotation) {
@@ -54,10 +43,6 @@ public final class WorldShellPlacement {
                         .setMirror(Mirror.NONE)
                         .setRotationPivot(BlockPos.ZERO)
                         .setIgnoreEntities(true);
-
-        if (ignoreAir) {
-            settings.addProcessor(BlockIgnoreProcessor.AIR);
-        }
 
         BlockPos origin = template.getZeroPositionWithTransform(
                 targetMin,

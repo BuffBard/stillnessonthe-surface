@@ -41,8 +41,31 @@ public final class WorldShellGenerator {
         // These directions indicate which neighboring chunks are inside.
         boolean north = VoidWorldBoundary.isInside(chunkX, chunkZ - 1);
         boolean south = VoidWorldBoundary.isInside(chunkX, chunkZ + 1);
-        boolean east  = VoidWorldBoundary.isInside(chunkX + 1, chunkZ);
-        boolean west  = VoidWorldBoundary.isInside(chunkX - 1, chunkZ);
+        boolean east = VoidWorldBoundary.isInside(chunkX + 1, chunkZ);
+        boolean west = VoidWorldBoundary.isInside(chunkX - 1, chunkZ);
+        boolean noCardinalNeighbors = !north && !south && !east && !west;
+
+        if (noCardinalNeighbors) {
+            boolean northwest = VoidWorldBoundary.isInside(
+                    chunkX - 1, chunkZ - 1);
+            boolean northeast = VoidWorldBoundary.isInside(
+                    chunkX + 1, chunkZ - 1);
+            boolean southeast = VoidWorldBoundary.isInside(
+                    chunkX + 1, chunkZ + 1);
+            boolean southwest = VoidWorldBoundary.isInside(
+                    chunkX - 1, chunkZ + 1);
+
+            if (northwest) {
+                placeOuterCorner(level, t, minX, minZ, Rotation.NONE);
+            } else if (northeast) {
+                placeOuterCorner(level, t, minX, minZ, Rotation.CLOCKWISE_90);
+            } else if (southeast) {
+                placeOuterCorner(level, t, minX, minZ, Rotation.CLOCKWISE_180);
+            } else if (southwest) {
+                placeOuterCorner(level, t, minX, minZ, Rotation.COUNTERCLOCKWISE_90);
+            }
+            return;
+        }
 
         if (north && west) {
             boolean diagonalInside =
@@ -80,19 +103,16 @@ public final class WorldShellGenerator {
                     minX, minZ,
                     Rotation.COUNTERCLOCKWISE_90
             );
-        }
-
-        else if (north) {
+        } else if (north) {
             placeEdge(level, t, minX, minZ, Rotation.NONE);
         } else if (east) {
             placeEdge(level, t, minX, minZ, Rotation.CLOCKWISE_90);
         } else if (south) {
             placeEdge(level, t, minX, minZ, Rotation.CLOCKWISE_180);
         } else if (west) {
-            placeEdge(level, t, minX, minZ,
-                    Rotation.COUNTERCLOCKWISE_90);
+            placeEdge(level, t, minX, minZ, Rotation.COUNTERCLOCKWISE_90);
         }
-        }
+    }
 
 
     private static void placeEdge(
@@ -103,7 +123,7 @@ public final class WorldShellGenerator {
             Rotation rotation
     ) {
         int bottomY = level.getMinY();
-        int seaLevel = level.getSeaLevel();
+        int seaLevel = level.getSeaLevel()+64;
 
         int segmentHeight = t.wall.getSize().getY();
 
@@ -150,7 +170,7 @@ public final class WorldShellGenerator {
                 : t.capstoneOuterCorner;
 
         int bottomY = level.getMinY();
-        int seaLevel = level.getSeaLevel();
+        int seaLevel = level.getSeaLevel()+64;
 
         int segmentHeight = wall.getSize().getY();
 
@@ -187,7 +207,7 @@ public final class WorldShellGenerator {
             Rotation rotation
     ) {
         int bottomY = level.getMinY();
-        int seaLevel = level.getSeaLevel();
+        int seaLevel = level.getSeaLevel()+64;
 
         int segmentHeight = t.wallOuterCorner.getSize().getY();
 
@@ -214,11 +234,6 @@ public final class WorldShellGenerator {
                 t.capstoneOuterCorner,
                 new BlockPos(minX, capstoneY, minZ),
                 rotation
-        );
-
-        System.out.println(
-                "[WorldShell] Generated OUTER corner at "
-                        + minX + ", " + minZ
         );
     }
 }

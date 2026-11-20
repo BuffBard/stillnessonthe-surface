@@ -1,8 +1,12 @@
 package com.hitsuji;
 import com.hitsuji.config.VoidWorldBoundaryConfig;
+import com.hitsuji.world.VoidBiomeHolder;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 
+import net.minecraft.world.level.biome.Biomes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +21,15 @@ public class StillnessOnTheSurface implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		VoidWorldBoundaryConfig.load();
+		ServerLifecycleEvents.SERVER_STARTING.register(server -> {
+			VoidBiomeHolder.set(
+					server.registryAccess()
+							.lookupOrThrow(Registries.BIOME)
+							.getOrThrow(Biomes.THE_VOID)
+			);
+		});
 	}
+
 
 	public static Identifier id(String path) {
 		return Identifier.fromNamespaceAndPath(MOD_ID, path);
